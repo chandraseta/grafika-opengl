@@ -20,8 +20,6 @@ def init():
     program = glCreateProgram()
     glAttachShader(program, vertexShader)
     glAttachShader(program, fragmentShader)
-    # Bind Attribute
-    glBindAttribLocation(program, 0, "vPosition")
     glLinkProgram(program)
     
     # Set Clear Color
@@ -30,10 +28,15 @@ def init():
 
 def draw(program):
     # Define Vertice List
-    vertices = numpy.array([0.0, 0.5, 0.0,
-                           -0.5, -0.5, 0.0,
-                            0.5, -0.5, 0.0], numpy.float32)    
+    # X Y Z R G B
+    vertices = numpy.array([0.0, 0.5, 0.0, 1.0, 1.0, 0.0,
+                           -0.5, -0.5, 0.0, 0.0, 1.0, 1.0,
+                            0.5, -0.5, 0.0, 1.0, 0.0, 1.0], numpy.float32)    
     
+    # Bind Attribute
+    glBindAttribLocation(program, 0, "vPosition")
+    glBindAttribLocation(program, 1, "color")
+
     # Generate Buffers and Bind Buffers
     VBO = glGenBuffers(1)
     VAO = glGenVertexArrays(1)
@@ -41,8 +44,10 @@ def draw(program):
     glBindBuffer(GL_ARRAY_BUFFER, VBO)
     glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW) # Copy data to buffer
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ctypes.c_void_p(0))
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 24, ctypes.c_void_p(0))
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 24, ctypes.c_void_p(12))
     glEnableVertexAttribArray(0)
+    glEnableVertexAttribArray(1)
 
     # Draw and Run
     glViewport(0, 0, width, height)
