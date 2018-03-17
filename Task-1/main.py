@@ -1,4 +1,5 @@
 import time
+import ctypes
 
 from OpenGL.GL import *
 from OpenGL.GL.shaders import *
@@ -19,22 +20,35 @@ def init():
     program = glCreateProgram()
     glAttachShader(program, vertexShader)
     glAttachShader(program, fragmentShader)
+    # Bind Attribute
     glBindAttribLocation(program, 0, "vPosition")
     glLinkProgram(program)
-
-    glClearColor(0.0, 0.0, 0.0, 1.0)
+    
+    # Set Clear Color
+    glClearColor(0.3, 0.3, 0.3, 1.0)
     return program
 
 def draw(program):
+    # Define Vertice List
     vertices = numpy.array([0.0, 0.5, 0.0,
                            -0.5, -0.5, 0.0,
-                            0.5, -0.5, 0.0], numpy.float32)
+                            0.5, -0.5, 0.0], numpy.float32)    
+    
+    # Generate Buffers and Bind Buffers
+    VBO = glGenBuffers(1)
+    VAO = glGenVertexArrays(1)
+    glBindVertexArray(VAO)
+    glBindBuffer(GL_ARRAY_BUFFER, VBO)
+    glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW) # Copy data to buffer
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ctypes.c_void_p(0))
+    glEnableVertexAttribArray(0)
+
+    # Draw and Run
     glViewport(0, 0, width, height)
     glClear(GL_COLOR_BUFFER_BIT)
     glUseProgram(program)
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vertices)
-    glEnableVertexAttribArray(0)
-
+    glBindVertexArray(VAO)
     glDrawArrays(GL_TRIANGLES, 0, 3)
 
     pygame.display.flip()
@@ -44,9 +58,19 @@ def main():
     pygame.display.set_mode((width, height), HWSURFACE|OPENGL|DOUBLEBUF)
 
     program = init()
-    draw(program)
 
-    time.sleep(4)
+    running = True
+    while running:
+        draw(program)
+        events = pygame.event.get()
+
+        # wait for exit
+        for event in events:
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    pygame.quit()
+                    running = False
+
 
 if __name__ == '__main__':
     main()
