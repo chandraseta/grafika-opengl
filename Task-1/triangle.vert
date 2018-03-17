@@ -1,7 +1,8 @@
-attribute vec4 vPosition;
-attribute vec4 color;
+#version 460 core
+layout(location=0) in vec4 vPosition;
+layout(location=1) in vec4 color;
 
-out varying vec4 normalColor;
+out varying  vec4 normalColor;
 
 void main()
 {
