@@ -15,8 +15,8 @@ def getFileContents(filename):
     return open(filename, 'r').read()
 
 def init():
-    vertexShader = compileShader(getFileContents("triangle.vert"), GL_VERTEX_SHADER)
-    fragmentShader = compileShader(getFileContents("triangle.frag"), GL_FRAGMENT_SHADER)
+    vertexShader = compileShader(getFileContents("data/shaders/triangle.vert"), GL_VERTEX_SHADER)
+    fragmentShader = compileShader(getFileContents("data/shaders/triangle.frag"), GL_FRAGMENT_SHADER)
     program = glCreateProgram()
     glAttachShader(program, vertexShader)
     glAttachShader(program, fragmentShader)
