@@ -33,13 +33,13 @@ def init():
 def wall(image): 
     glBegin(GL_QUADS)
     glTexCoord2f(0,0)
-    glVertex3f(-4,-4,-16)
+    glVertex3f(-8,-4,-16)
     glTexCoord2f(0,1)
-    glVertex3f(-4,4,-16)
+    glVertex3f(-8,4,-16)
     glTexCoord2f(1,1)
-    glVertex3f(4,4,-8)
+    glVertex3f(8,4,-16)
     glTexCoord2f(1,0)
-    glVertex3f(4,-4,-8)
+    glVertex3f(8,-4,-16)
     glEnd()
 
 def draw_car():
