@@ -13,8 +13,13 @@ def parse(filename):
             part.append(convertColor(coord[0]))
         else:
             coord_temp = []
+            j = 0
             for val in coord:
-                coord_temp.append(float(val))
+                if(j == 0):
+                    coord_temp.append(float(val)/100)
+                else:
+                    coord_temp.append(float(val)*-1/100)
+                j = j+1
             coord_temp.append(0)
             part.append(coord_temp)
     image.append(part)
