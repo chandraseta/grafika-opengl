@@ -25,7 +25,7 @@ def init():
     glClearColor(0.3, 0.3, 0.3, 1.0)
     return program
 
-def drawImage(program, image):
+def drawImage(program, image, x_offset, y_offset):
     # Define Vertice List
     # X Y Z R G B  
     
@@ -46,8 +46,15 @@ def drawImage(program, image):
         index_list.append(temp)
         for j in range(1,len(image[i])):
             for k in range(0,3):
-                vertex_list.append(image[i][j][k])
+                # Position
+                if k == 0:
+                    vertex_list.append(image[i][j][k] + x_offset)
+                elif k == 1:
+                    vertex_list.append(image[i][j][k] + y_offset)
+                else:
+                    vertex_list.append(image[i][j][k])
             for k in range(0,3):
+                # Color
                 vertex_list.append(image[i][0][k])   
         index_list.append(j) #element count
         temp = temp + j
@@ -78,9 +85,17 @@ def draw(image):
 
     program = init()
 
+    x_offset = 0
+    y_offset = 0
+
+    x_offset_vel = 0
+    y_offset_vel = 0
+
     running = True
     while running:
-        drawImage(program,image)
+        x_offset += x_offset_vel
+        y_offset += y_offset_vel
+        drawImage(program, image, x_offset, y_offset)
         events = pygame.event.get()
 
         # wait for exit
@@ -89,7 +104,15 @@ def draw(image):
                 if event.key == K_ESCAPE:
                     pygame.quit()
                     running = False
+                if event.key == K_a or event.key == K_LEFT:
+                    x_offset_vel -= 0.0005
+                if event.key == K_d or event.key == K_RIGHT:
+                    x_offset_vel += 0.0005
+                if event.key == K_w or event.key == K_UP:
+                    y_offset_vel += 0.0001
+                if event.key == K_s or event.key == K_DOWN:
+                    y_offset_vel -= 0.0001
 
 
 if __name__ == '__main__':
-    draw_triangle()
+    print("Hi from car.py")
