@@ -27,27 +27,34 @@ def init():
 
 def drawImage(program, image):
     # Define Vertice List
-    # X Y Z R G B
-    vertices = numpy.array([0.0, 0.5, 0.0, 1.0, 0.0, 0.0,
-                           -0.5, -0.5, 0.0, 0.0, 1.0, 0.0,
-                            0.5, -0.5, 0.0, 0.0, 0.0, 1.0], numpy.float32)    
+    # X Y Z R G B  
     
     # Bind Attribute
     glBindAttribLocation(program, 0, "vPosition")
     glBindAttribLocation(program, 1, "color")
 
     # Generate Buffers and Bind Buffers
-    VBO = glGenBuffers(len(image))
+    VBO = glGenBuffers(1)
     VAO = glGenVertexArrays(1)
-    glBindVertexArray(VAO)
+    
+    index_list = []
+    vertex_list = []
 
+    temp = 0
+    glBindVertexArray(VAO)
     for i in range(len(image)):
-        vertices = numpy.array([],numpy.float32)
+        index_list.append(temp)
         for j in range(1,len(image[i])):
-            vertices = numpy.append(vertices,image[i][j])
-            vertices = numpy.append(vertices,image[i][0])
-        glBindBuffer(GL_ARRAY_BUFFER, VBO)
-        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW) # Copy data to buffer
+            for k in range(0,3):
+                vertex_list.append(image[i][j][k])
+            for k in range(0,3):
+                vertex_list.append(image[i][0][k])   
+        index_list.append(j) #element count
+        temp = temp + j
+    
+    vertices = numpy.array(vertex_list, numpy.float32)
+    glBindBuffer(GL_ARRAY_BUFFER, VBO)
+    glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW) # Copy data to buffer
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_TRUE, 24, ctypes.c_void_p(0))
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 24, ctypes.c_void_p(12))
@@ -59,10 +66,9 @@ def drawImage(program, image):
     glClear(GL_COLOR_BUFFER_BIT)
     glUseProgram(program)
 
-    for i in range(len(image)):
-        glBindVertexArray(VAO)
-        glBindBuffer(GL_ARRAY_BUFFER, VBO+i)
-        glDrawArrays(GL_TRIANGLES, 0, len(image[i]))
+    glBindVertexArray(VAO)
+    for i in range(0,len(index_list),2):
+        glDrawArrays(GL_POLYGON, index_list[i], index_list[i+1])
 
     pygame.display.flip()
 

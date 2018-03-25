@@ -30,8 +30,8 @@ def draw(program):
     # X Y Z R G B
     vertices = numpy.array([0.0, 0.5, 0.0, 1.0, 0.0, 0.0,
                            -0.5, -0.5, 0.0, 0.0, 1.0, 0.0,
-                            0.5, -0.5, 0.0, 0.0, 0.0, 1.0], numpy.float32)    
-    
+                            0.5, -0.5, 0.0, 0.0, 0.0, 1.0,
+                            0.6, -0.6, 0.0, 0.0, 0.0, 1.0], numpy.float32)    
     # Bind Attribute
     glBindAttribLocation(program, 0, "vPosition")
     glBindAttribLocation(program, 1, "color")
@@ -53,7 +53,7 @@ def draw(program):
     glClear(GL_COLOR_BUFFER_BIT)
     glUseProgram(program)
     glBindVertexArray(VAO)
-    glDrawArrays(GL_TRIANGLES, 0, 3)
+    glDrawArrays(GL_POLYGON, 0, 4)
 
     pygame.display.flip()
 
