@@ -1,92 +1,89 @@
 import ctypes
 import numpy
-import OpenGL
 import pygame
 import time
 
 from OpenGL.GL import *
 from OpenGL.GL.shaders import *
-from OpenGL.GLU import *
-from pygame.locals import *
+from pygame.locals import *  
 
-width = 1024
-height = 768
+width = 640
+height = 480
 
 def getFileContents(filename):
     return open(filename, 'r').read()
 
 def init():
+    vertexShader = compileShader(getFileContents("data/shaders/triangle.vert"), GL_VERTEX_SHADER)
+    fragmentShader = compileShader(getFileContents("data/shaders/triangle.frag"), GL_FRAGMENT_SHADER)
+    program = glCreateProgram()
+    glAttachShader(program, vertexShader)
+    glAttachShader(program, fragmentShader)
+    glLinkProgram(program)
+    
+    # Set Clear Color
+    glClearColor(0.3, 0.3, 0.3, 1.0)
+    return program
+
+def drawImage(program, image):
+    # Define Vertice List
+    # X Y Z R G B
+    vertices = numpy.array([0.0, 0.5, 0.0, 1.0, 0.0, 0.0,
+                           -0.5, -0.5, 0.0, 0.0, 1.0, 0.0,
+                            0.5, -0.5, 0.0, 0.0, 0.0, 1.0], numpy.float32)    
+    
+    # Bind Attribute
+    glBindAttribLocation(program, 0, "vPosition")
+    glBindAttribLocation(program, 1, "color")
+
+    # Generate Buffers and Bind Buffers
+    VBO = glGenBuffers(len(image))
+    VAO = glGenVertexArrays(1)
+    glBindVertexArray(VAO)
+
+    for i in range(len(image)):
+        vertices = numpy.array([],numpy.float32)
+        for j in range(1,len(image[i])):
+            vertices = numpy.append(vertices,image[i][j])
+            vertices = numpy.append(vertices,image[i][0])
+        glBindBuffer(GL_ARRAY_BUFFER, VBO)
+        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW) # Copy data to buffer
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_TRUE, 24, ctypes.c_void_p(0))
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 24, ctypes.c_void_p(12))
+    glEnableVertexAttribArray(0)
+    glEnableVertexAttribArray(1)
+
+    # Draw and Run
+    glViewport(0, 0, width, height)
+    glClear(GL_COLOR_BUFFER_BIT)
+    glUseProgram(program)
+
+    for i in range(len(image)):
+        glBindVertexArray(VAO)
+        glBindBuffer(GL_ARRAY_BUFFER, VBO+i)
+        glDrawArrays(GL_TRIANGLES, 0, len(image[i]))
+
+    pygame.display.flip()
+
+def draw(image):
     pygame.init()
-    pygame.display.set_mode((width, height), DOUBLEBUF|OPENGL)
+    pygame.display.set_mode((width, height), HWSURFACE|OPENGL|DOUBLEBUF)
 
-    # vertexShader = compileShader(getFileContents("data/shaders/car.vert"), GL_VERTEX_SHADER)
-    # fragmentShader = compileShader(getFileContents("data/shaders/car.frag"), GL_FRAGMENT_SHADER)
-
-    # program = glCreateProgram()
-    # glAttachShader(program, vertexShader)
-    # glAttachShader(program, fragmentShader)
-    # glLinkProgram(program)
-
-    # glClearColor(0.0, 0.0, 0.0, 1.0)
-    # return program
-
-def wall(image): 
-    glBegin(GL_QUADS)
-    glTexCoord2f(0,0)
-    glVertex3f(-8,-4,-16)
-    glTexCoord2f(0,1)
-    glVertex3f(-8,4,-16)
-    glTexCoord2f(1,1)
-    glVertex3f(8,4,-16)
-    glTexCoord2f(1,0)
-    glVertex3f(8,-4,-16)
-    glEnd()
-
-def draw_car():
-    # program = init()
-
-    init()
-
-    img = pygame.image.load('data/images/car_sample.png')
-    textureData = pygame.image.tostring(img, "RGB", 1)
-    img_width = img.get_width()
-    img_height = img.get_height()
-
-    img_texture = glGenTextures(1)
-    glBindTexture(GL_TEXTURE_2D, img_texture)
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img_width, img_height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData)
-    glEnable(GL_TEXTURE_2D)
-
-    aspectRatio = width/height
+    program = init()
 
     running = True
     while running:
-        glLoadIdentity()
-
-        # gluPerspective(
-        #   fieldOfViewY
-        #   aspectRatio
-        #   nearField
-        #   farField
-        # )
-        gluPerspective(60, aspectRatio, 0.01, 100.0)
-        glTranslatef(0,0,0)
-        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
-
-        wall(img_texture)
-
-        pygame.display.flip()
-        pygame.time.wait(50)
-
+        drawImage(program,image)
         events = pygame.event.get()
 
+        # wait for exit
         for event in events:
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     pygame.quit()
                     running = False
 
+
 if __name__ == '__main__':
-    draw_car()
+    draw_triangle()

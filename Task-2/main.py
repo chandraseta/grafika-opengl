@@ -2,8 +2,9 @@
 import sys
 sys.path.append('src/')
 
-from triangle import draw_triangle
+from svgparser import *
 from car import *
 
 if __name__ == '__main__':
-    draw_car()
+    image = parse("data/images/triangle.svg")
+    draw(image)
