@@ -7,5 +7,7 @@ from car import *
 from triangle import draw_triangle
 
 if __name__ == '__main__':
-    image = parse("data/images/regalia_flat.svg")
-    draw(image)
+    images = []
+    images.append(parse("data/images/regalia_flat.svg"))
+    images.append(parse("data/images/regalia_flat.svg"))
+    draw(images)

@@ -7,8 +7,8 @@ from OpenGL.GL import *
 from OpenGL.GL.shaders import *
 from pygame.locals import *  
 
-width = 640
-height = 480
+width = 1024
+height = 768
 
 def getFileContents(filename):
     return open(filename, 'r').read()
@@ -25,7 +25,7 @@ def init():
     glClearColor(0.3, 0.3, 0.3, 1.0)
     return program
 
-def drawImage(program, image, x_offset, y_offset):
+def drawImage(program, images, bg_x_offset, fg_x_offset, fg_y_offset):
     # Define Vertice List
     # X Y Z R G B  
     
@@ -42,22 +42,33 @@ def drawImage(program, image, x_offset, y_offset):
 
     temp = 0
     glBindVertexArray(VAO)
-    for i in range(len(image)):
-        index_list.append(temp)
-        for j in range(1,len(image[i])):
-            for k in range(0,3):
-                # Position
-                if k == 0:
-                    vertex_list.append(image[i][j][k] + x_offset)
-                elif k == 1:
-                    vertex_list.append(image[i][j][k] + y_offset)
-                else:
-                    vertex_list.append(image[i][j][k])
-            for k in range(0,3):
-                # Color
-                vertex_list.append(image[i][0][k])   
-        index_list.append(j) #element count
-        temp = temp + j
+
+    for id, image in enumerate(images):
+        for i in range(len(image)):
+            index_list.append(temp)
+            for j in range(1,len(image[i])):
+                for k in range(0,3):
+                    if id == 0:
+                        # Position for Image background
+                        if k == 0:
+                            vertex_list.append(image[i][j][k] + bg_x_offset)
+                        else:
+                            vertex_list.append(image[i][j][k])
+                    elif id == (len(images)-1):                        
+                        # Position for Image foreground
+                        if k == 0:
+                            vertex_list.append(image[i][j][k] + fg_x_offset)
+                        elif k == 1:
+                            vertex_list.append(image[i][j][k] + fg_y_offset)
+                        else:
+                            vertex_list.append(image[i][j][k])
+                    else:
+                        vertex_list.append(image[i][j][k])
+                for k in range(0,3):
+                    # Color
+                    vertex_list.append(image[i][0][k])   
+            index_list.append(j) #element count
+            temp = temp + j
     
     vertices = numpy.array(vertex_list, numpy.float32)
     glBindBuffer(GL_ARRAY_BUFFER, VBO)
@@ -79,7 +90,7 @@ def drawImage(program, image, x_offset, y_offset):
 
     pygame.display.flip()
 
-def draw(image):
+def draw(images):
     pygame.init()
     pygame.display.set_mode((width, height), HWSURFACE|OPENGL|DOUBLEBUF)
 
@@ -91,11 +102,15 @@ def draw(image):
     x_offset_vel = 0
     y_offset_vel = 0
 
+    bg_offset = 0
+    bg_offset_vel = 0.0001
+
     running = True
     while running:
         x_offset += x_offset_vel
         y_offset += y_offset_vel
-        drawImage(program, image, x_offset, y_offset)
+        bg_offset += bg_offset_vel
+        drawImage(program, images, bg_offset, x_offset, y_offset)
         events = pygame.event.get()
 
         # wait for exit
