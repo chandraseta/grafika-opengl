@@ -1,5 +1,5 @@
 import numpy
-def parse(filename):
+def parseImage(filename):
     image = []
     part = []
     file = open(filename,"r")

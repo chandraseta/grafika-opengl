@@ -2,25 +2,23 @@
 import sys
 sys.path.append('src/')
 
-from svgparser import *
 from car import *
-from triangle import draw_triangle
+from car3D import startShowcase
+from objparser import parseModel
+from svgparser import parseImage
 
 from pygame import mixer
 
 if __name__ == '__main__':
 
-    pygame.mixer.init()
-    pygame.mixer.music.load("data/sounds/stand-by-me.mp3")
-    pygame.mixer.music.play(-1, 0.0)
+    # pygame.mixer.init()
+    # pygame.mixer.music.load("data/sounds/car-customization.mp3")
+    # pygame.mixer.music.play(-1, 0.0)
 
-    images = []
+    colors = ["#333333"]
 
-    # Back to Front
-    images.append(parse("data/images/clouds.svg"))
-    images.append(parse("data/images/mountain.svg"))
-    images.append(parse("data/images/building_back.svg"))
-    images.append(parse("data/images/building_front.svg"))
-    images.append(parse("data/images/road.svg"))
-    images.append(parse("data/images/regalia_flat.svg"))
-    draw(images)
+    models = []
+    models.append(parseModel("data/models/regalia.obj", colors))
+
+
+    startShowcase(models)

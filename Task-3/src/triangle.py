@@ -57,7 +57,7 @@ def draw(program):
 
     pygame.display.flip()
 
-def draw_triangle():
+def drawTriangle():
     pygame.init()
     pygame.display.set_mode((width, height), HWSURFACE|OPENGL|DOUBLEBUF)
 
