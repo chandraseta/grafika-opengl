@@ -1,34 +1,58 @@
 import numpy
 
-def parseModel(filename, colors):
-    model = []
-    parts = []
+def parseModel(filename, isColored, colors):
+    vertices = []
+    v_parts = []
+    indices = []
+    f_parts = []
+
     file = open(filename,"r")
     lines = file.readlines()
     clr = 0
-    current_model = -1
-    model_count = 0
+    v_current = 0
+    f_current = 0
+    v_set_count = 0
+    f_set_count = -1
     for line in lines:
-        coords = line.rstrip("\n").split(" ")
+        line_split = line.rstrip("\n").split(" ")
 
-        if (len(coords) == 4):
-            if (coords[0] == 'v'):
-                if (current_model != model_count):
-                    current_model += 1
-                    if (len(parts) > 0):
-                        model.append(parts)
-                    parts = []
-                    parts.append(convertColor(colors[clr]))
-                    clr += 1
-                coords_temp = []
-                for id, val in enumerate(coords):
+        if (len(line_split) > 0):
+            if (line_split[0] == 'o'):
+                v_set_count += 1
+                f_set_count += 1
+
+        if (len(line_split) == 4):
+            if (line_split[0] == 'v'):
+                if (v_current != v_set_count):
+                    v_current += 1
+                    if (len(v_parts) > 0):
+                        vertices.append(v_parts)
+                    v_parts = []
+                    v_parts.append(convertColor(colors[clr]))
+                    if isColored:
+                        clr += 1
+                v_split_temp = []
+                for id, val in enumerate(line_split):
                     if (id > 0):
-                        coords_temp.append(float(val)/200)
-                parts.append(coords_temp)
-            else:
-                model_count += 1
-    model.append(parts)
-    return model
+                        v_split_temp.append(float(val)/200)
+                v_parts.append(v_split_temp)
+            elif (line_split[0] == 'f'):
+                if (f_current != f_set_count):
+                    f_current += 1
+                    if (len(f_parts) > 0):
+                        indices.append(f_parts)
+                    f_parts = []
+                f_split_temp = []
+                for id, val in enumerate(line_split):
+                    if (id > 0):
+                        index = line_split[id].split("/")
+                        f_split_temp.append(int(index[0]) - 1)
+                f_parts.append(f_split_temp)
+
+    vertices.append(v_parts)
+    indices.append(f_parts)
+
+    return vertices, indices
 
 def convertColor(color):
     hexcolor = []

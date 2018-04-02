@@ -18,7 +18,11 @@ if __name__ == '__main__':
     colors = ["#333333"]
 
     models = []
-    models.append(parseModel("data/models/regalia.obj", colors))
+    indices = []
 
+    regalia_vertices, regalia_indices = parseModel("data/models/regalia.obj", False, colors)
 
-    startShowcase(models)
+    models.append(regalia_vertices)
+    indices.append(regalia_indices)
+    
+    startShowcase(models, indices)

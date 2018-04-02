@@ -4,6 +4,8 @@ layout(location=1) in vec4 color;
 
 out varying  vec4 normalColor;
 
+uniform mat4 transform;
+
 void main()
 {
     gl_Position = vPosition;

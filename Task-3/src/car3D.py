@@ -25,7 +25,7 @@ def init():
     glClearColor(0.9, 0.9, 0.9, 1.0)
     return program
 
-def drawModels(program, models, x_offsets, y_offsets, z_offsets):
+def drawModels(program, models, model_indices, x_offsets, y_offsets, z_offsets):
     # Define Vertice List
     # X Y Z R G B  
     
@@ -36,6 +36,7 @@ def drawModels(program, models, x_offsets, y_offsets, z_offsets):
     # Generate Buffers and Bind Buffers
     VBO = glGenBuffers(1)
     VAO = glGenVertexArrays(1)
+    EBO = glGenBuffers(1)
     
     index_list = []
     vertex_list = []
@@ -57,13 +58,17 @@ def drawModels(program, models, x_offsets, y_offsets, z_offsets):
                 for k in range(0,3):
                     # Color
                     vertex_list.append(model[i][0][k])
-            index_list.append(j) #element count
+            index_list.append(j) # Element count
             temp = temp + j
 
     vertices = numpy.array(vertex_list, numpy.float32)
+    indices = numpy.array(model_indices)
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO)
     glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW)
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO)
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, len(indices), indices, GL_STATIC_DRAW)
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_TRUE, 24, ctypes.c_void_p(0))
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 24, ctypes.c_void_p(12))
@@ -81,7 +86,7 @@ def drawModels(program, models, x_offsets, y_offsets, z_offsets):
 
     pygame.display.flip()
 
-def startShowcase(models):
+def startShowcase(models, indices):
     pygame.init()
     pygame.display.set_mode((width, height), HWSURFACE|OPENGL|DOUBLEBUF)
 
@@ -107,7 +112,7 @@ def startShowcase(models):
     running = True
     while running:
 
-        drawModels(program, models, x_offsets, y_offsets, z_offsets)
+        drawModels(program, models, indices, x_offsets, y_offsets, z_offsets)
         events = pygame.event.get()
 
         # wait for exit
