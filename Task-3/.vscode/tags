@@ -1,0 +1,39 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+main.py	../main.py	1;"	kind:file	line:1
+colors	../main.py	/^    colors = ["#333333"]$/;"	kind:variable	line:18
+models	../main.py	/^    models = []$/;"	kind:variable	line:20
+indices	../main.py	/^    indices = []$/;"	kind:variable	line:21
+car.py	../src/car.py	1;"	kind:file	line:1
+width	../src/car.py	/^width = 1024$/;"	kind:variable	line:10
+height	../src/car.py	/^height = 768$/;"	kind:variable	line:11
+getFileContents	../src/car.py	/^def getFileContents(filename):$/;"	kind:function	line:13
+init	../src/car.py	/^def init():$/;"	kind:function	line:16
+drawImage	../src/car.py	/^def drawImage(program, images, x_offsets, y_offsets):$/;"	kind:function	line:28
+draw	../src/car.py	/^def draw(images):$/;"	kind:function	line:94
+car3D.py	../src/car3D.py	1;"	kind:file	line:1
+width	../src/car3D.py	/^width = 1024$/;"	kind:variable	line:10
+height	../src/car3D.py	/^height = 768$/;"	kind:variable	line:11
+getFileContents	../src/car3D.py	/^def getFileContents(filename):$/;"	kind:function	line:13
+init	../src/car3D.py	/^def init():$/;"	kind:function	line:16
+drawModels	../src/car3D.py	/^def drawModels(program, models, model_indices, x_offsets, y_offsets, z_offsets):$/;"	kind:function	line:28
+startShowcase	../src/car3D.py	/^def startShowcase(models, indices):$/;"	kind:function	line:90
+objparser.py	../src/objparser.py	1;"	kind:file	line:1
+parseModel	../src/objparser.py	/^def parseModel(filename, isColored, colors):$/;"	kind:function	line:3
+convertColor	../src/objparser.py	/^def convertColor(color):$/;"	kind:function	line:57
+image	../src/objparser.py	/^    image = parse("..\/data\/models\/regalia.obj")/;"	kind:variable	line:65
+svgparser.py	../src/svgparser.py	1;"	kind:file	line:1
+parseImage	../src/svgparser.py	/^def parseImage(filename):$/;"	kind:function	line:2
+convertColor	../src/svgparser.py	/^def convertColor(color):$/;"	kind:function	line:28
+image	../src/svgparser.py	/^    image = parse("..\/data\/images\/regalia_flat.svg")/;"	kind:variable	line:36
+triangle.py	../src/triangle.py	1;"	kind:file	line:1
+width	../src/triangle.py	/^width = 640$/;"	kind:variable	line:10
+height	../src/triangle.py	/^height = 480$/;"	kind:variable	line:11
+getFileContents	../src/triangle.py	/^def getFileContents(filename):$/;"	kind:function	line:13
+init	../src/triangle.py	/^def init():$/;"	kind:function	line:16
+draw	../src/triangle.py	/^def draw(program):$/;"	kind:function	line:28
+drawTriangle	../src/triangle.py	/^def drawTriangle():$/;"	kind:function	line:60
