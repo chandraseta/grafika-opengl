@@ -1,7 +1,9 @@
 import ctypes
+import math
 import numpy
 import pygame
 import time
+import transformations
 
 from OpenGL.GL import *
 from OpenGL.GL.shaders import *
@@ -25,7 +27,7 @@ def init():
     glClearColor(0.9, 0.9, 0.9, 1.0)
     return program
 
-def drawModels(program, models, model_indices, x_offsets, y_offsets, z_offsets):
+def drawModels(program, models, model_indices, x_offsets, y_offsets, z_offsets, transform):
     # Define Vertice List
     # X Y Z R G B  
     
@@ -80,6 +82,8 @@ def drawModels(program, models, model_indices, x_offsets, y_offsets, z_offsets):
     glClear(GL_COLOR_BUFFER_BIT)
     glUseProgram(program)
 
+    glUniformMatrix4fv(glGetUniformLocation(program, 'transform'), 1, GL_FALSE, transform)
+
     glBindVertexArray(VAO)
     for i in range(0,len(index_list),2):
         glDrawArrays(GL_POLYGON, index_list[i], index_list[i+1] )
@@ -110,9 +114,11 @@ def startShowcase(models, indices):
         z_vels.append(0)
 
     running = True
+    angle = 0
     while running:
+        matrix = transformations.rotation_matrix(angle * math.pi / 180, [0, 1, 0], point = None)
 
-        drawModels(program, models, indices, x_offsets, y_offsets, z_offsets)
+        drawModels(program, models, indices, x_offsets, y_offsets, z_offsets, matrix)
         events = pygame.event.get()
 
         # wait for exit
@@ -121,6 +127,8 @@ def startShowcase(models, indices):
                 if event.key == K_ESCAPE:
                     pygame.quit()
                     running = False
+        
+        angle += 1
 
 if __name__ == '__main__':
     print("Hi from car.py")
