@@ -40,9 +40,8 @@ def drawModels(program, models, model_indices, x_offsets, y_offsets, z_offsets, 
     glBindAttribLocation(program, 1, "color")
 
     # Generate Buffers and Bind Buffers
-    VBO = glGenBuffers(1)
     VAO = glGenVertexArrays(1)
-    EBO = glGenBuffers(1)
+    VBO = glGenBuffers(1)
     
     index_list = []
     vertex_list = []
@@ -73,25 +72,31 @@ def drawModels(program, models, model_indices, x_offsets, y_offsets, z_offsets, 
     glBindBuffer(GL_ARRAY_BUFFER, VBO)
     glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW)
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO)
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, len(indices), indices, GL_STATIC_DRAW)
-
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_TRUE, 24, ctypes.c_void_p(0))
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 24, ctypes.c_void_p(12))
     glEnableVertexAttribArray(0)
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 24, ctypes.c_void_p(12))
     glEnableVertexAttribArray(1)
+
+    # EBO = glGenBuffers(1)
+    # glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO)
+    # glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW)
 
     # Draw and Run
     glViewport(0, 0, width, height)
     glClear(GL_COLOR_BUFFER_BIT)
     glUseProgram(program)
 
+    # glBindVertexArray(VAO)
+    # glEnableVertexAttribArray(0)
+    # glEnableVertexAttribArray(1)
+
     glUniformMatrix4fv(glGetUniformLocation(program, 'transform'), 1, GL_FALSE, transform)
 
-    glBindVertexArray(VAO)
-    for i in range(0,len(index_list),2):
-        # glDrawArrays(GL_POLYGON, index_list[i], index_list[i+1] )
-        glDrawElements(GL_TRIANGLES, len(indices), GL_UNSIGNED_INT, indices)
+    # for i in range(0,len(index_list),3):
+    #     # glDrawArrays(GL_POLYGON, index_list[i], index_list[i+1] )
+
+    glDrawElements(GL_TRIANGLES, len(vertices), GL_UNSIGNED_INT, indices)
 
     pygame.display.flip()
 
