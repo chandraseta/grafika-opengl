@@ -9,13 +9,17 @@ from OpenGL.GL import *
 from OpenGL.GL.shaders import *
 from pygame.locals import *  
 
-width = 1024
-height = 768
+DEGREE = math.pi / 180
+
+width = 800
+height = 600
 
 def getFileContents(filename):
     return open(filename, 'r').read()
 
 def init():
+    pygame.init()
+    
     vertexShader = compileShader(getFileContents("data/shaders/triangle.vert"), GL_VERTEX_SHADER)
     fragmentShader = compileShader(getFileContents("data/shaders/triangle.frag"), GL_FRAGMENT_SHADER)
     program = glCreateProgram()
@@ -115,11 +119,65 @@ def startShowcase(models, indices):
 
     running = True
     angle = 0
+    matrix = transformations.identity_matrix()
     while running:
-        matrix = transformations.rotation_matrix(angle * math.pi / 180, [0, 1, 0], point = None)
-
         drawModels(program, models, indices, x_offsets, y_offsets, z_offsets, matrix)
         events = pygame.event.get()
+
+        
+        keys = pygame.key.get_pressed()
+        if keys[K_LEFT] or keys[K_RIGHT] or keys[K_UP] or keys[K_DOWN]:
+            dx, dy = (0, 0)
+            if keys[K_LEFT]:
+                dx = 0.1
+            elif keys[K_RIGHT]:
+                dx = -0.1
+            if keys[K_UP]:
+                dy = -0.1
+            elif keys[K_DOWN]:
+                dy = 0.1
+            trans = transformations.translation_matrix([dx, dy, 0])
+            matrix = numpy.matmul(trans, matrix)
+        
+        if keys[K_w] or keys[K_a] or keys[K_s] or keys[K_d]:
+            ai, aj = (0, 0)
+            if keys[K_a]:
+                aj = -DEGREE
+            elif keys[K_d]:
+                aj = DEGREE            
+            if keys[K_w]:
+                ai = DEGREE
+            elif keys[K_s]:
+                ai = -DEGREE
+            trans = transformations.euler_matrix(ai, aj, 0)
+            matrix = numpy.matmul(trans, matrix)
+
+        if keys[K_r] or keys[K_f]:
+            scale = 1
+            if keys[K_r]:
+                scale = 1.1
+            if keys[K_f]:
+                scale = 0.9
+            trans = transformations.scale_matrix(scale)
+            matrix = numpy.matmul(trans, matrix)
+
+        # Check if certain region is pressed with mouse
+        if pygame.mouse.get_pressed()[0]:
+            mouseX, mouseY = pygame.mouse.get_pos()
+            ai, aj = (0, 0)
+
+            if mouseX < 100:
+                aj = -DEGREE
+            elif mouseX > (width - 100):
+                aj = DEGREE
+            
+            if mouseY < 100:
+                ai = DEGREE
+            elif mouseY > (height - 100):
+                ai = -DEGREE
+
+            trans = transformations.euler_matrix(ai, aj, 0)
+            matrix = numpy.matmul(trans, matrix)
 
         # wait for exit
         for event in events:
@@ -127,8 +185,15 @@ def startShowcase(models, indices):
                 if event.key == K_ESCAPE:
                     pygame.quit()
                     running = False
-        
-        angle += 1
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                scale = 1
+                if event.button == 4:
+                    scale = 1.1
+                if event.button == 5:
+                    scale = 0.9
+
+                trans = transformations.scale_matrix(scale)
+                matrix = numpy.matmul(trans, matrix)
 
 if __name__ == '__main__':
     print("Hi from car.py")
