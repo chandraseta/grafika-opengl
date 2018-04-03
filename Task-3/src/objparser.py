@@ -8,11 +8,12 @@ def parseModel(filename, isColored, colors):
 
     file = open(filename,"r")
     lines = file.readlines()
-    clr = 0
-    v_current = 0
-    f_current = 0
+    clrID = 0
+    v_current = -1
+    f_current = -1
     v_set_count = 0
     f_set_count = -1
+    v_begin = False
     for line in lines:
         line_split = line.rstrip("\n").split(" ")
 
@@ -28,7 +29,7 @@ def parseModel(filename, isColored, colors):
                     if (len(v_parts) > 0):
                         vertices.append(v_parts)
                     v_parts = []
-                    v_parts.append(convertColor(colors[clr]))
+                    v_parts.append(convertColor(colors[clrID]))
                     if isColored:
                         clr += 1
                 v_split_temp = []
