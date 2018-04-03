@@ -90,7 +90,8 @@ def drawModels(program, models, model_indices, x_offsets, y_offsets, z_offsets, 
 
     glBindVertexArray(VAO)
     for i in range(0,len(index_list),2):
-        glDrawArrays(GL_POLYGON, index_list[i], index_list[i+1] )
+        # glDrawArrays(GL_POLYGON, index_list[i], index_list[i+1] )
+        glDrawElements(GL_TRIANGLES, len(indices), GL_UNSIGNED_INT, indices)
 
     pygame.display.flip()
 
