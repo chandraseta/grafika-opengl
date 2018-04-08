@@ -2,10 +2,8 @@
 import sys
 sys.path.append('src/')
 
-from car import *
 from car3D import startShowcase
 from objparser import parseModel
-from svgparser import parseImage
 
 from pygame import mixer
 
