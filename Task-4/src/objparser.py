@@ -12,13 +12,13 @@ def parseModel(filename, isColored, colors):
     v_current = -1
     f_current = -1
     v_set_count = 0
-    f_set_count = -1
+    f_set_count = 0
     v_begin = False
     for line in lines:
         line_split = line.rstrip("\n").split(" ")
 
         if (len(line_split) > 0):
-            if (line_split[0] == 'o'):
+            if (line_split[0] == 'o' or line_split[0] == 'g'):
                 v_set_count += 1
                 f_set_count += 1
 
