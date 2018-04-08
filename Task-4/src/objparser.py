@@ -1,4 +1,5 @@
 import numpy
+import Model
 
 def parseModel(filename, isColored, colors):
     vertices = []
@@ -13,7 +14,6 @@ def parseModel(filename, isColored, colors):
     f_current = -1
     v_set_count = 0
     f_set_count = -1
-    v_begin = False
     for line in lines:
         line_split = line.rstrip("\n").split(" ")
 
@@ -55,7 +55,7 @@ def parseModel(filename, isColored, colors):
 
     return vertices, indices
 
-def convertColor(color):
+def convertColor(, color):
     hexcolor = []
     hexcolor.append(int(color[1:3],16)/255)
     hexcolor.append(int(color[3:5],16)/255)
