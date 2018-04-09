@@ -29,7 +29,7 @@ def parseModel(filename):
                 finalizing = True
                 index.append([line_split[1],line_split[2],line_split[3]])
             elif(finalizing):
-                buffer = processArray(index,vertex,normal,texture)    
+                buffer, index_buffer = processArray(index,vertex,normal,texture)    
                 index = []
                 vertex = []
                 normal = []
@@ -43,13 +43,17 @@ def parseModel(filename):
 
 def processArray(index, vertex, normal, texture):
     buffer = []
+    index_buffer = []
     for faces in index:
+        ebo_index = []
         for point in faces:
             indexes = point.split("/")
             buffer += vertex[int(indexes[0])-1]
             buffer += texture[int(indexes[1])-1]
             buffer += normal[int(indexes[2])-1]
-    return buffer
+            ebo_index += float(indexes[0])
+        index_buffer.append(ebo_index)
+    return buffer, index_buffer
 
 if __name__ == '__main__':
     parseModel("../data/models/box.obj")
