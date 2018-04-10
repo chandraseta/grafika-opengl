@@ -1,8 +1,9 @@
 import numpy
-import Model
+import mesh
+import model
 
 def parseModel(filename):
-    model = []
+    model = model.Model()
     mesh_cnt = 0
 
     file = open(filename,"r")
@@ -36,10 +37,10 @@ def parseModel(filename):
                 texture = []
                 finalizing = False
 
-                #mesh = Mesh() # Load List of values ke 1 mesh
-                #model.append(mesh) # Masukin mesh ke model
+                new_mesh = mesh.Mesh(buffer, index_buffer)
+                model.addMesh(new_mesh)
 
-    #return model
+    return model
 
 def processArray(index, vertex, normal, texture):
     buffer = []
@@ -51,7 +52,7 @@ def processArray(index, vertex, normal, texture):
             buffer += vertex[int(indexes[0])-1]
             buffer += texture[int(indexes[1])-1]
             buffer += normal[int(indexes[2])-1]
-            ebo_index += float(indexes[0])
+            ebo_index.append(float(indexes[0]))
         index_buffer.append(ebo_index)
     return buffer, index_buffer
 
