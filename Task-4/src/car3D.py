@@ -34,10 +34,6 @@ def init():
 def drawModels(program, models, model_indices, x_offsets, y_offsets, z_offsets, transform):
     # Define Vertice List
     # X Y Z R G B  
-    
-    # Bind Attribute
-    glBindAttribLocation(program, 0, "vPosition")
-    glBindAttribLocation(program, 1, "color")
 
     # Generate Buffers and Bind Buffers
     VAO = glGenVertexArrays(1)
@@ -100,11 +96,7 @@ def drawModels(program, models, model_indices, x_offsets, y_offsets, z_offsets, 
 
     pygame.display.flip()
 
-def startShowcase(models, indices):
-    pygame.init()
-    pygame.display.set_mode((width, height), HWSURFACE|OPENGL|DOUBLEBUF)
-
-    program = init()
+def startShowcase(program, models):
 
     x_offsets = []
     y_offsets = []
@@ -127,10 +119,13 @@ def startShowcase(models, indices):
     angle = 0
     matrix = transformations.identity_matrix()
     while running:
-        drawModels(program, models, indices, x_offsets, y_offsets, z_offsets, matrix)
-        events = pygame.event.get()
-
+        models.draw()    
+        glViewport(0, 0, 640, 480)
+        glClear(GL_COLOR_BUFFER_BIT)
+        glUseProgram(program)
+        pygame.display.flip()
         
+        events = pygame.event.get()        
         keys = pygame.key.get_pressed()
         if keys[K_LEFT] or keys[K_RIGHT] or keys[K_UP] or keys[K_DOWN]:
             dx, dy = (0, 0)

@@ -3,7 +3,7 @@ import mesh
 import model
 
 def parseModel(filename):
-    model = model.Model()
+    cur_model = model.Model()
     mesh_cnt = 0
 
     file = open(filename,"r")
@@ -38,9 +38,9 @@ def parseModel(filename):
                 finalizing = False
 
                 new_mesh = mesh.Mesh(buffer, index_buffer)
-                model.addMesh(new_mesh)
-
-    return model
+                cur_model.addMesh(new_mesh)
+    
+    return cur_model
 
 def processArray(index, vertex, normal, texture):
     buffer = []
