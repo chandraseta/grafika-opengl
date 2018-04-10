@@ -12,22 +12,34 @@ def MTL(filename):
             mtl = contents[values[1]] = {}
         elif mtl is None:
             raise ValueError("mtl file doesn't start with newmtl stmt")
+        elif values[0] == 'map_d':
+            pass
+        elif values[0] == 'map_Ks':
+            pass
+        elif values[0] == 'map_Bump':
+            pass
         elif values[0] == 'map_Kd':
             # load the texture referred to by this declaration
-            mtl[values[0]] = values[1]
-            surf = pygame.image.load(mtl['map_Kd'])
-            image = pygame.image.tostring(surf, 'RGBA', 1)
-            ix, iy = surf.get_rect().size
-            texid = mtl['texture_Kd'] = glGenTextures(1)
-            glBindTexture(GL_TEXTURE_2D, texid)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                GL_LINEAR)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                GL_LINEAR)
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ix, iy, 0, GL_RGBA,
-                GL_UNSIGNED_BYTE, image)
+            try:
+                mtl[values[0]] = values[1]
+                surf = pygame.image.load(mtl['map_Kd'])
+                image = pygame.image.tostring(surf, 'RGBA', 1)
+                ix, iy = surf.get_rect().size
+                texid = mtl['texture_Kd'] = glGenTextures(1)
+                glBindTexture(GL_TEXTURE_2D, texid)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                    GL_LINEAR)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                    GL_LINEAR)
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, ix, iy, 0, GL_RGBA,
+                    GL_UNSIGNED_BYTE, image)
+            except:
+                pass
         else:
-            mtl[values[0]] = list(map(float, values[1:]))
+            try:
+                mtl[values[0]] = list(map(float, values[1:]))
+            except:
+                pass
     return contents
 
 class OBJ:
@@ -84,13 +96,16 @@ class OBJ:
         for face in self.faces:
             vertices, normals, texture_coords, material = face
 
-            mtl = self.mtl[material]
-            if 'texture_Kd' in mtl:
-                # use diffuse texmap
-                glBindTexture(GL_TEXTURE_2D, mtl['texture_Kd'])
-            else:
-                # just use diffuse colour
-                glColor(*mtl['Kd'])
+            try:
+                mtl = self.mtl[material]
+                if 'texture_Kd' in mtl:
+                    # use diffuse texmap
+                    glBindTexture(GL_TEXTURE_2D, mtl['texture_Kd'])
+                else:
+                    # just use diffuse colour
+                    glColor(*mtl['Kd'])
+            except AttributeError:
+                pass
 
             glBegin(GL_POLYGON)
             for i in range(len(vertices)):
