@@ -18,11 +18,11 @@ class Shader(object):
     def use(self):
         glUseProgram(self._program_ID)
 
-    def setBool(self, val):
-        glUniform1i(glGetUniformLocation(self._program_ID, ''), int(val))
+    def setBool(self, name, val):
+        glUniform1i(glGetUniformLocation(self._program_ID, name), int(val))
 
-    def setInt(self, val):
-        glUniform1i(glGetUniformLocation(self._program_ID, ''), val)
+    def setInt(self, name, val):
+        glUniform1i(glGetUniformLocation(self._program_ID, name), val)
 
-    def setFloat(self, val):
-        glUniform1f(glGetUniformLocation(self._program_ID, ''), val)
+    def setFloat(self, name, val):
+        glUniform1f(glGetUniformLocation(self._program_ID, name), val)
