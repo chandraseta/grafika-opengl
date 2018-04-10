@@ -4,7 +4,6 @@ from OpenGL.GL import *
 def MTL(filename):
     contents = {}
     mtl = None
-    i = 1
     for line in open(filename, "r"):
         if line.startswith('#'): continue
         values = line.split()
@@ -12,7 +11,7 @@ def MTL(filename):
         if values[0] == 'newmtl':
             mtl = contents[values[1]] = {}
         elif mtl is None:
-            raise ValueError, "mtl file doesn't start with newmtl stmt"
+            raise ValueError("mtl file doesn't start with newmtl stmt")
         elif values[0] == 'map_Kd':
             # load the texture referred to by this declaration
             mtl[values[0]] = values[1]
@@ -28,11 +27,7 @@ def MTL(filename):
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ix, iy, 0, GL_RGBA,
                 GL_UNSIGNED_BYTE, image)
         else:
-            try:
-                mtl[values[0]] = map(float, values[1:])
-            except ValueError, e:
-                print "error", e, "on line", i
-        i += 1
+            mtl[values[0]] = list(map(float, values[1:]))
     return contents
 
 class OBJ:
@@ -49,17 +44,17 @@ class OBJ:
             values = line.split()
             if not values: continue
             if values[0] == 'v':
-                v = map(float, values[1:4])
+                v = list(map(float, values[1:4]))
                 if swapyz:
                     v = v[0], v[2], v[1]
                 self.vertices.append(v)
             elif values[0] == 'vn':
-                v = map(float, values[1:4])
+                v = list(map(float, values[1:4]))
                 if swapyz:
                     v = v[0], v[2], v[1]
                 self.normals.append(v)
             elif values[0] == 'vt':
-                self.texcoords.append(map(float, values[1:3]))
+                self.texcoords.append(list(map(float, values[1:3])))
             elif values[0] in ('usemtl', 'usemat'):
                 material = values[1]
             elif values[0] == 'mtllib':
@@ -85,6 +80,7 @@ class OBJ:
         glNewList(self.gl_list, GL_COMPILE)
         glEnable(GL_TEXTURE_2D)
         glFrontFace(GL_CCW)
+
         for face in self.faces:
             vertices, normals, texture_coords, material = face
 
