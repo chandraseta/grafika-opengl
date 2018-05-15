@@ -18,12 +18,12 @@ class Particle(object):
         self.vy = vy
         self.params = params
 
-        self.age= 0
+        self.age = 0
         self.max_age = self.params['maxAge']
 
         self.wind = 0.1
         self.size = size
-        self.color=color
+        self.color = color
         self.is_dead = False
 
     def update(self,dx=0.05,dy=0.05):
@@ -35,6 +35,9 @@ class Particle(object):
 
         self.x += self.vx/100
         self.y += self.vy/100
+        self.size += (0.01 * self.age/400)
+        # self.color[3] = 0.5 - 0.5*float(self.age)/float(self.max_age)
+        self.color[3] = 0.5 * math.exp(-0.008 * float(self.age))
         self.check_particle_age()
 
     def draw(self):
@@ -42,7 +45,8 @@ class Particle(object):
         glColor4fv(self.color)
         glPushMatrix()
         glTranslatef(self.x,self.y,0)
-        glutSolidSphere(self.size,20,20)
+        # glutSolidSphere(self.size,20,20)
+        glutSolidTeapot(self.size)
         glPopMatrix()
         glutPostRedisplay()
 
@@ -52,7 +56,7 @@ class Particle(object):
 
         # Start ageing
         # Achieve a linear color falloff(ramp) based on age.
-        self.color[3]= 1.0 - float(self.age)/float(self.max_age)
+        self.color[3] = 1.0 - float(self.age)/float(self.max_age)
 
 class ParticleBurst(Particle):
     def __init__(self,x,y,vx,vy,params):
@@ -81,7 +85,7 @@ class ParticleSystem():
     def addExploder(self):
         speed = self.params['explosionSpeed']
         speed *= (1 - random.uniform(0,self.params['explosionVariation'])/100)
-        angle = 270*3.14/180 + round(random.uniform(-0.5,0.5),2)
+        angle = 270*3.14/180 + round(random.normalvariate(0, 0.2), 2)
         vx = speed * math.cos(angle)
         vy = -speed * math.sin(angle)
 
@@ -92,7 +96,7 @@ class ParticleSystem():
     def update(self):
         interval = self.params['launchInterval']
         self.timer += 1
-        print(interval)
+        # print(interval)
         if self.timer % interval == 0 or self.timer < 2:		
             self.addExploder()
 
