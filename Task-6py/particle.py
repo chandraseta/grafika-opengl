@@ -103,12 +103,13 @@ class ParticleSystem():
         speed *= (1 - random.uniform(0,self.params['explosionVariation'])/100)
 
         angleVar = self.params['explosionAngleVar']
-        if(angleVar != 0):
-            angle = 270*3.14/180 + round(random.uniform(-angleVar,angleVar)/angleVar * 0.5,2)
-            angleZ = 270*3.14/180 + round(random.uniform(-angleVar,angleVar)/angleVar * 0.5,2)
+        baseAngle = self.params['explosionAngle']
+        if (angleVar != 0):
+            angle = baseAngle * 3.14/180 + round(random.uniform(-angleVar,angleVar)/angleVar * 0.5,2)
+            angleZ = baseAngle * 3.14/180 + round(random.uniform(-angleVar,angleVar)/angleVar * 0.5,2)
         else:
-            angle = -90*3.14/180
-            angleZ = -90*3.14/180
+            angle = baseAngle * 3.14/180
+            angleZ = baseAngle * 3.14/180
 
         vx = speed * math.cos(angle)
         vy = -speed * math.sin(angle)
