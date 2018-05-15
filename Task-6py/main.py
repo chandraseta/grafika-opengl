@@ -97,13 +97,14 @@ class Main:
         glRotate(self.ry, 1, 0, 0)
         glRotate(self.rx, 0, 1, 0)
         # glCallList(self.obj.gl_list)
-        # self.smoke.update()
+        self.smoke.update()
         self.rain.update()
         # glPushMatrix()
         # glPopMatrix()
         # glutPostRedisplay()
 
         glutSwapBuffers()
+        glutPostRedisplay()
 
     def mouseCallback(self, button, state, x, y):
         self.downX= x
@@ -126,4 +127,5 @@ class Main:
         self.downY = y
         glutPostRedisplay()
 
-main_prog = Main()
+if __name__ == "__main__":
+    main_prog = Main()  

@@ -20,12 +20,12 @@ class Particle(object):
         self.vz = vz
         self.params = params
 
-        self.age= 0
+        self.age = 0
         self.max_age = self.params['maxAge']
 
         self.wind = 0.1
         self.size = size
-        self.color=color
+        self.color = color
         self.is_dead = False
 
     def update(self,dx=0.05,dy=0.05, dz=0.05):
@@ -40,6 +40,11 @@ class Particle(object):
         self.x += self.vx/100
         self.y += self.vy/100
         self.z += self.vz/100
+
+        # self.size += (0.01 * self.age/400)
+        # self.color[3] = 0.5 - 0.5*float(self.age)/float(self.max_age)
+        # self.color[3] = 0.5 * math.exp(-0.008 * float(self.age))
+        
         self.check_particle_age()
 
     def draw(self):
@@ -57,7 +62,7 @@ class Particle(object):
 
         # Start ageing
         # Achieve a linear color falloff(ramp) based on age.
-        self.color[3]= 1.0 - float(self.age)/float(self.max_age)
+        self.color[3] = 1.0 - float(self.age)/float(self.max_age)
 
 class ParticleBurst(Particle):
     def __init__(self,x,y,z,vx,vy,vz,params):
