@@ -31,7 +31,7 @@ class Main:
         glutInit(sys.argv)
         glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
         glutInitWindowSize(800,600)
-        glutCreateWindow("hello")
+        glutCreateWindow(b"hello")
         glClearColor(0.3,0.3,0.3,1.0)
         hx = viewport[0]/2
         hy = viewport[1]/2
@@ -82,25 +82,30 @@ class Main:
         # Load params from file
         smoke_params = json.load(open('config/smoke_config.json'))
         self.smoke = ParticleSystem(0,0,smoke_params)
+        
+        rain_params = json.load(open('config/rain_config.json'))
+        self.rain = ParticleSystem(0,0, rain_params)
 
         glutMainLoop()
 
     def display(self):
-        while(True):
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-            glLoadIdentity()
-            # RENDER OBJECT
-            glTranslate(self.tx/20., self.ty/20., - self.zpos)
-            glRotate(self.ry, 1, 0, 0)
-            glRotate(self.rx, 0, 1, 0)
-            #glCallList(self.obj.gl_list)
-            self.smoke.update()
-            # glPushMatrix()
-            # glutSolidSphere(0.5,20,20)
-            # glPopMatrix()
-            # glutPostRedisplay()
+        #while(True):
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glLoadIdentity()
+        # RENDER OBJECT
+        glTranslate(self.tx/20., self.ty/20., - self.zpos)
+        glRotate(self.ry, 1, 0, 0)
+        glRotate(self.rx, 0, 1, 0)
+        #glCallList(self.obj.gl_list)
+        self.smoke.update()
+        self.rain.update()
+        # glPushMatrix()
+        # glutSolidSphere(0.5,20,20)
+        # glPopMatrix()
+        # glutPostRedisplay()
 
-            glutSwapBuffers()
+        glutSwapBuffers()
+        glutPostRedisplay()
 
     def mouseCallback(self, button, state, x, y):
         self.downX= x
@@ -123,4 +128,5 @@ class Main:
         self.downY = y
         glutPostRedisplay()
 
-main_prog = Main()
+if __name__ == "__main__":
+    main_prog = Main()  
