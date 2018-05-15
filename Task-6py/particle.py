@@ -47,7 +47,7 @@ class Particle(object):
         glColor4fv(self.color)
         glPushMatrix()
         glTranslatef(self.x,self.y,self.z)
-        glutSolidSphere(self.size,20,20)
+        glutSolidSphere(self.size,10,10)
         glPopMatrix()
         glutPostRedisplay()
 

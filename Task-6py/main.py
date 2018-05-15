@@ -31,7 +31,7 @@ class Main:
         glutInit(sys.argv)
         glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
         glutInitWindowSize(800,600)
-        glutCreateWindow("hello")
+        glutCreateWindow("OpenXV")
         glClearColor(0.3,0.3,0.3,1.0)
         hx = viewport[0]/2
         hy = viewport[1]/2
@@ -46,7 +46,7 @@ class Main:
 
         # most obj files expect to be smooth-shaded
         # LOAD OBJECT AFTER PYGAME INIT
-        #self.obj = OBJ(sys.argv[1], swapyz=True)
+        # self.obj = OBJ('data/models/R8.obj', swapyz=False)
 
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
@@ -96,11 +96,10 @@ class Main:
         glTranslate(self.tx/20., self.ty/20., - self.zpos)
         glRotate(self.ry, 1, 0, 0)
         glRotate(self.rx, 0, 1, 0)
-        #glCallList(self.obj.gl_list)
-        self.smoke.update()
+        # glCallList(self.obj.gl_list)
+        # self.smoke.update()
         self.rain.update()
         # glPushMatrix()
-        # glutSolidSphere(0.5,20,20)
         # glPopMatrix()
         # glutPostRedisplay()
 
