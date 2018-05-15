@@ -131,7 +131,6 @@ class ParticleSystem():
         maxParticle = self.params['maxParticle']
 
         self.timer += 1
-        print(interval)
         if self.timer % interval == 0 or self.timer < 2:
             for n in range(birthRate):
                 if(len(self.particleList) < maxParticle):

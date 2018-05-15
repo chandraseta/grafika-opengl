@@ -4,7 +4,7 @@
     "windX" : 0.01,
     "windY" : 0,
     "windZ" : 0.01,
-    "maxAge" : 500,
+    "maxAge" : 250,
     "maxParticle"	:	500,
     "launchSpeed" : 0,
     "launchVariation" : 500,
@@ -17,7 +17,7 @@
     "launchSize" : 0.01,
     "initPosX" : 0,
     "initPosY" : 5,
-    "varX"	:	2,
-    "varZ"	:	2,
+    "varX"	:	3,
+    "varZ"	:	3,
     "birthRate"	:	10	
 }

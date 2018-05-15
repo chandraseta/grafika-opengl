@@ -25,6 +25,10 @@ class Main:
     middleButton = False
     rightButton = False
     sdepth = 10
+    
+    frame=0
+    time=0
+    timebase=0
 
     def __init__(self):
         viewport = (800,600)
@@ -46,7 +50,7 @@ class Main:
 
         # most obj files expect to be smooth-shaded
         # LOAD OBJECT AFTER PYGAME INIT
-        # self.obj = OBJ('data/models/R8.obj', swapyz=False)
+        self.obj = OBJ('data/models/DB10.obj', swapyz=False)
 
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
@@ -86,7 +90,6 @@ class Main:
         def update_smoke_alpha(init_alpha, age):
             return init_alpha * math.exp(-0.008 * float(age))
         self.smoke = ParticleSystem(0,0,smoke_params, size_updater=update_smoke_size, alpha_updater=update_smoke_alpha)
-        # self.smoke = ParticleSystem(0,0,smoke_params)
         
         rain_params = json.load(open('config/rain_config.json'))
         self.rain = ParticleSystem(0,0, rain_params)
@@ -94,19 +97,22 @@ class Main:
         glutMainLoop()
 
     def display(self):
-        #while(True):
+        self.frame += 1
+        self.time = glutGet(GLUT_ELAPSED_TIME)
+        if (self.time - self.timebase > 1000):
+            print("FPS: "+str(self.frame*1000.0/(self.time-self.timebase)))
+            self.timebase = self.time;
+            self.frame = 0;
+    
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glLoadIdentity()
         # RENDER OBJECT
         glTranslate(self.tx/20., self.ty/20., - self.zpos)
         glRotate(self.ry, 1, 0, 0)
         glRotate(self.rx, 0, 1, 0)
-        # glCallList(self.obj.gl_list)
+        glCallList(self.obj.gl_list)
         self.smoke.update()
         self.rain.update()
-        # glPushMatrix()
-        # glPopMatrix()
-        # glutPostRedisplay()
 
         glutSwapBuffers()
         glutPostRedisplay()

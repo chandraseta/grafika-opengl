@@ -1,10 +1,10 @@
 {
 	"gravity": -9.8,
-	"dragFactor": 50,
+	"dragFactor": 40,
 	"windX": 0.3,
-	"windY": 0,
+	"windY": 0.01,
 	"windZ": 0,
-	"maxAge": 500,
+	"maxAge": 100,
 	"maxParticle": 500,
 	"launchSpeed": 0,
 	"launchVariation": 10,
