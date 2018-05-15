@@ -27,17 +27,18 @@ class Particle(object):
         self.is_dead = False
 
     def update(self,dx=0.05,dy=0.05):
-        self.vx += dx* self.wind
+        self.vx += dx*self.wind
         self.vy += dy*self.wind - self.params['gravity']/100
 
         self.vx *= 1- self.params['dragFactor']/1000
         self.vy *= 1- self.params['dragFactor']/1000
 
-        self.x += self.vx
-        self.y += self.vy
+        self.x += self.vx/100
+        self.y += self.vy/100
         self.check_particle_age()
 
     def draw(self):
+        #print ("x: %s Y: %s" %(self.x,self.y))
         glColor4fv(self.color)
         glPushMatrix()
         glTranslatef(self.x,self.y,0)
@@ -49,7 +50,7 @@ class Particle(object):
         self.age +=1
         self.is_dead = self.age >= self.max_age
 
-        #Start ageing
+        # Start ageing
         # Achieve a linear color falloff(ramp) based on age.
         self.color[3]= 1.0 - float(self.age)/float(self.max_age)
 
@@ -64,19 +65,15 @@ class ParticleBurst(Particle):
 
     # Override parent method for Exploder particle
     def check_particle_age(self):
-        if self.vy <0:
-            self.age += 1
-
-        # Tweaking explode time
-        temp = int ( 100*random.random()) + self.params['explosionVariation']
-
-        if self.age > temp:
-            self.is_dead = True
+        self.age += 1
+        self.is_dead = self.age >= self.max_age
 
 class ParticleSystem():
     def __init__(self, x, y, params):
         self.x = params['initPosX']
         self.y = params['initPosY']
+        self.maxParticle = params['maxParticle']
+        self.count = 0
         self.timer = 0
         self.params = params
         self.addExploder()
@@ -88,14 +85,19 @@ class ParticleSystem():
         vx = speed * math.cos(angle)
         vy = -speed * math.sin(angle)
 
-        f = ParticleBurst(30,10,vx,vy,self.params)
+        f = ParticleBurst(self.x,self.y,vx,vy,self.params)
         particleList.append(f)
 
 
     def update(self):
+        interval = self.params['launchInterval']
         self.timer += 1
-        for i in range(len(particleList)):
-            p = particleList[i]
+        print(interval)
+        if self.timer % interval == 0 or self.timer < 2:		
+            self.addExploder()
+
+        for p in particleList:
+            i = particleList.index(p)
             x = self.params['windX']
             y = self.params['windY']
             p.update(x,y)
@@ -105,3 +107,4 @@ class ParticleSystem():
                 particleList.pop(i)
             else:
                 p.draw()
+                #print('drawing sphere',i,' at ',p.age,' ',p.y)

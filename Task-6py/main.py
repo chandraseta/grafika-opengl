@@ -32,11 +32,10 @@ class Main:
         glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
         glutInitWindowSize(800,600)
         glutCreateWindow("hello")
-        glClearColor(0,0,0,1.0)
+        glClearColor(0.3,0.3,0.3,1.0)
         hx = viewport[0]/2
         hy = viewport[1]/2
 
-        glOrtho(0,150,0,150,0,100)
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
         glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
         glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
@@ -52,9 +51,32 @@ class Main:
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         width, height = viewport
+
         gluPerspective(90.0, width/float(height), 1, 100.0)
         glEnable(GL_DEPTH_TEST)
+
         glMatrixMode(GL_MODELVIEW)
+        glShadeModel(GL_SMOOTH)
+        glCullFace(GL_FRONT)
+        
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glEnable(GL_BLEND)
+
+        mat_specular = [1.0, 0.0, 0.0, 0.0]
+        mat_diffuse = [0.9, 0.0, 0.0, 0.0]
+        mat_shininess = [50.0]
+        light_position = [5.0, 5.0, 5.0, 1.0]
+        white_light = [1.0, 1.0, 1.0, 1.0]
+        lmodel_ambient = [0.1, 0.5, 0.1, 1.0]
+
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse)
+        glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular)
+        glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess)
+
+        glLightfv(GL_LIGHT0, GL_POSITION, light_position)
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, white_light)
+        glLightfv(GL_LIGHT0, GL_SPECULAR,white_light)
+        glLightModelfv(GL_LIGHT_MODEL_AMBIENT,lmodel_ambient)
 
 
         # Load params from file
@@ -64,17 +86,21 @@ class Main:
         glutMainLoop()
 
     def display(self):
-        gluLookAt(0.0,0.0,1.0,0.0,0.0,1.0,0.0,0.0,1.0)
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        glLoadIdentity()
-        # RENDER OBJECT
-        glTranslate(self.tx/20., self.ty/20., - self.zpos)
-        glRotate(self.ry, 1, 0, 0)
-        glRotate(self.rx, 0, 1, 0)
-        #glCallList(self.obj.gl_list)
-        self.smoke.update()
-        glutSwapBuffers()
-        glutSolidSphere(0.5,20,20)
+        while(True):
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+            glLoadIdentity()
+            # RENDER OBJECT
+            glTranslate(self.tx/20., self.ty/20., - self.zpos)
+            glRotate(self.ry, 1, 0, 0)
+            glRotate(self.rx, 0, 1, 0)
+            #glCallList(self.obj.gl_list)
+            self.smoke.update()
+            # glPushMatrix()
+            # glutSolidSphere(0.5,20,20)
+            # glPopMatrix()
+            # glutPostRedisplay()
+
+            glutSwapBuffers()
 
     def mouseCallback(self, button, state, x, y):
         self.downX= x
