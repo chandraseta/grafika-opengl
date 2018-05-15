@@ -13,7 +13,7 @@
 	"explosionVariation": 50,
 	"explosionAngle": 0,
 	"explosionAngleVar": 10,
-	"explodeCount": 40,
+	"explodeCount": 0,
 	"launchColor": [0.8, 0.8, 0.8, 0.2],
 	"launchSize": 0.05,
 	"initPosX": -0.77,

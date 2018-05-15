@@ -9,6 +9,32 @@ from OpenGL.GLUT import *
 # Made this global, as it needs access across
 # particleList = []
 
+class Utils():
+	'''Utilitiy Class for repeated function calls
+	Loads the config for sim from config.json
+	'''
+	def __init__(self):
+		try:
+			fp = open('./config.json')
+			self.params = json.load(fp)
+		except:
+			logging.exception("Unable to load the config file")
+
+	@property
+	def config(self):
+		return self.params
+
+	@staticmethod
+	def getRadians(x):
+		return math.pi/180.0 * x
+
+	@staticmethod
+	def getRandomColor():
+		color = [1.0]				#Alpha channel
+		for i in range(3):
+			color.insert(0,random.random())	
+		return  color
+
 class Particle(object):
     def __init__(self,x,y,z,vx,vy,vz,color,size,params, size_updater = None, alpha_updater = None):
         #super(Particle, self).__init__()
@@ -56,6 +82,10 @@ class Particle(object):
             # self.color[3] = 0.5 - 0.5*float(self.age)/float(self.max_age)
             # self.color[3] = 0.5 * math.exp(-0.008 * float(self.age))
         
+            # Collision with ground
+            if (self.y < 0.25):
+                self.vy = 0
+
             self.check_particle_age()
 
     def draw(self):
@@ -76,7 +106,8 @@ class Particle(object):
         self.color[3] = 1.0 - float(self.age)/float(self.max_age)
 
 class ParticleBurst(Particle):
-    def __init__(self,x,y,z,vx,vy,vz,params, size_updater = None, alpha_updater = None):
+    def __init__(self,x,y,z,vx,vy,vz,params, particleList, size_updater = None, alpha_updater = None):
+        self.particleList = particleList
         self.params = params
         color = self.params['launchColor']
         size = self.params['launchSize']
@@ -84,8 +115,34 @@ class ParticleBurst(Particle):
         self.wind = 1
         self.age = 0
 
+    def explode(self):
+        if (self.params['explodeCount'] > 0):
+            #pick random burst color
+            color = Utils.getRandomColor()	
+            explodeCount = self.params['explodeCount']
+
+            for i in range(explodeCount):
+                angle = Utils.getRadians(random.randint(0,360))			
+                speed = self.params['explosionSpeed'] * (1 -random.random())
+                vx = math.cos(angle)*speed
+                vy = -math.sin(angle)*speed
+                x  = self.x + vx
+                y  = self.y + vy
+                # Create Fireworks particles
+                obj = Particle(x,y,vx,vy,color,self.params['particleSize'])			
+                self.particleList.append(obj)
+
     # Override parent method for Exploder particle
     def check_particle_age(self):
+        # if self.vy < 0:
+        #     self.age += 1
+
+		# # Tweaking explode time
+        # temp = int (100 * random.random()) + self.params['explosionVariation']
+		
+        # if self.age > temp:
+        #     self.is_dead = True			
+        #     self.explode()
         self.age += 1
         self.is_dead = self.age >= self.max_age
 
@@ -125,7 +182,7 @@ class ParticleSystem():
         startX = self.x + random.uniform(-varX,varX)
         startZ = random.uniform(-varZ,varZ) + self.params['initPosZ']
 
-        f = ParticleBurst(startX,self.y,startZ,vx,vy,vz,self.params, self.size_updater, self.alpha_updater)
+        f = ParticleBurst(startX,self.y,startZ,vx,vy,vz,self.params, self.particleList, self.size_updater, self.alpha_updater)
         self.particleList.append(f)
 
 
