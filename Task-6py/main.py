@@ -86,21 +86,21 @@ class Main:
         glutMainLoop()
 
     def display(self):
-        while(True):
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-            glLoadIdentity()
-            # RENDER OBJECT
-            glTranslate(self.tx/20., self.ty/20., - self.zpos)
-            glRotate(self.ry, 1, 0, 0)
-            glRotate(self.rx, 0, 1, 0)
-            #glCallList(self.obj.gl_list)
-            self.smoke.update()
-            # glPushMatrix()
-            # glutSolidSphere(0.5,20,20)
-            # glPopMatrix()
-            # glutPostRedisplay()
+        #while(True):
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glLoadIdentity()
+        # RENDER OBJECT
+        glTranslate(self.tx/20., self.ty/20., - self.zpos)
+        glRotate(self.ry, 1, 0, 0)
+        glRotate(self.rx, 0, 1, 0)
+        #glCallList(self.obj.gl_list)
+        self.smoke.update()
+        # glPushMatrix()
+        # glutSolidSphere(0.5,20,20)
+        # glPopMatrix()
+        # glutPostRedisplay()
 
-            glutSwapBuffers()
+        glutSwapBuffers()
 
     def mouseCallback(self, button, state, x, y):
         self.downX= x
