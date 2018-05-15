@@ -1,0 +1,22 @@
+{
+    "gravity" : 9.8,
+    "dragFactor" : 10,
+    "windX" : 0.01,
+    "windY" : 0,
+    "windZ" : 0.01,
+    "maxAge" : 500,
+    "maxParticle"	:	500,
+    "launchSpeed" : 0,
+    "launchVariation" : 50,
+    "launchInterval" : 5,
+    "explosionSpeed" : 0,
+    "explosionVariation": 5,
+    "explosionAngleVar"	: 0,
+    "launchColor" : [0.8,0.0,0.8,1.0],
+    "launchSize" : 0.05,
+    "initPosX" : 0,
+    "initPosY" : 0,
+    "varX"	:	2,
+    "varZ"	:	2,
+    "birthRate"	:	10	
+}

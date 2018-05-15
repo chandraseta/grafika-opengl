@@ -82,6 +82,9 @@ class Main:
         # Load params from file
         smoke_params = json.load(open('config/smoke_config.json'))
         self.smoke = ParticleSystem(0,0,smoke_params)
+        
+        rain_params = json.load(open('config/rain_config.json'))
+        self.rain = ParticleSystem(0,0, rain_params)
 
         glutMainLoop()
 
@@ -95,6 +98,7 @@ class Main:
         glRotate(self.rx, 0, 1, 0)
         #glCallList(self.obj.gl_list)
         self.smoke.update()
+        self.rain.update()
         # glPushMatrix()
         # glutSolidSphere(0.5,20,20)
         # glPopMatrix()
