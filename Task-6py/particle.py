@@ -119,7 +119,7 @@ class ParticleSystem():
         varZ = self.params['varZ']
 
         startX = self.x + random.uniform(-varX,varX)
-        startZ = random.uniform(-varZ,varZ)
+        startZ = random.uniform(-varZ,varZ) + self.params['initPosZ']
 
         f = ParticleBurst(startX,self.y,startZ,vx,vy,vz,self.params, self.size_updater, self.alpha_updater)
         self.particleList.append(f)

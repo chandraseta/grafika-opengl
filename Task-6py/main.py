@@ -16,7 +16,7 @@ from particle import *
 
 class Main:
     rx, ry = (0,0)
-    tx, ty = (0,0)
+    tx, ty = (3,0)
     downX = 0
     downY = 0
     zpos = 5
