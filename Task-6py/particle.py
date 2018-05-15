@@ -31,28 +31,32 @@ class Particle(object):
         self.size_updater = size_updater
         self.alpha_updater = alpha_updater
 
-    def update(self,dx=0.05,dy=0.05, dz=0.05):
-        self.vx += dx*self.wind
-        self.vy += dy*self.wind - self.params['gravity']/100
-        self.vz += dz*self.wind
+    def update(self,dx=0.05,dy=0.05, dz=0.05, isDisabled=False):
+        if isDisabled:
+            self.is_dead = True
+            self.size = 0
+        else:
+            self.vx += dx*self.wind
+            self.vy += dy*self.wind - self.params['gravity']/100
+            self.vz += dz*self.wind
 
-        self.vx *= 1- self.params['dragFactor']/1000
-        self.vy *= 1- self.params['dragFactor']/1000
-        self.vz *= 1- self.params['dragFactor']/1000
+            self.vx *= 1- self.params['dragFactor']/1000
+            self.vy *= 1- self.params['dragFactor']/1000
+            self.vz *= 1- self.params['dragFactor']/1000
 
-        self.x += self.vx/100
-        self.y += self.vy/100
-        self.z += self.vz/100
+            self.x += self.vx/100
+            self.y += self.vy/100
+            self.z += self.vz/100
 
-        if self.size_updater is not None:
-            self.size = self.size_updater(self.size, self.age)
-        if self.alpha_updater is not None:
-            self.color[3] = self.alpha_updater(0.5, self.age)
-        # self.size += (0.01 * self.age/400)
-        # self.color[3] = 0.5 - 0.5*float(self.age)/float(self.max_age)
-        # self.color[3] = 0.5 * math.exp(-0.008 * float(self.age))
+            if self.size_updater is not None:
+                self.size = self.size_updater(self.size, self.age)
+            if self.alpha_updater is not None:
+                self.color[3] = self.alpha_updater(0.5, self.age)
+            # self.size += (0.01 * self.age/400)
+            # self.color[3] = 0.5 - 0.5*float(self.age)/float(self.max_age)
+            # self.color[3] = 0.5 * math.exp(-0.008 * float(self.age))
         
-        self.check_particle_age()
+            self.check_particle_age()
 
     def draw(self):
         #print ("x: %s Y: %s" %(self.x,self.y))
@@ -125,7 +129,7 @@ class ParticleSystem():
         self.particleList.append(f)
 
 
-    def update(self):
+    def update(self, isDisabled=False):
         interval = self.params['launchInterval']
         birthRate = self.params['birthRate']
         maxParticle = self.params['maxParticle']
@@ -141,7 +145,7 @@ class ParticleSystem():
             x = self.params['windX']
             y = self.params['windY']
             z = self.params['windZ']
-            p.update(x,y,z)
+            p.update(x,y,z, isDisabled)
             p.check_particle_age()
             if p.is_dead:
                 p.color = [0.0,0.0,0.0,0.0]

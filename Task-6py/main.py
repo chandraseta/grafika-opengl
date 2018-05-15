@@ -14,6 +14,7 @@ from OpenGL.GLUT import *
 from objloader import *
 from particle import *
 
+keyStates = []
 class Main:
     rx, ry = (0,0)
     tx, ty = (3,0)
@@ -29,6 +30,10 @@ class Main:
     frame=0
     time=0
     timebase=0
+
+    disable_smoke = False
+    disable_rain = False
+    disable_firework = True
 
     def __init__(self):
         viewport = (800,600)
@@ -47,6 +52,8 @@ class Main:
         glutDisplayFunc(self.display)
         glutMouseFunc(self.mouseCallback)
         glutMotionFunc(self.motionCallback)
+        glutKeyboardFunc(self.keyPressed)
+        glutKeyboardUpFunc(self.keyUp)
 
         # most obj files expect to be smooth-shaded
         # LOAD OBJECT AFTER PYGAME INIT
@@ -105,6 +112,15 @@ class Main:
             print("FPS: "+str(self.frame*1000.0/(self.time-self.timebase)))
             self.timebase = self.time
             self.frame = 0
+
+        if (keyStates[ord('r')]):
+            self.disable_rain = not self.disable_rain
+        
+        if (keyStates[ord('s')]):
+            self.disable_smoke = not self.disable_smoke
+
+        if (keyStates[ord('f')]):
+            self.disable_firework = not self.disable_firework
     
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glLoadIdentity()
@@ -113,9 +129,9 @@ class Main:
         glRotate(self.ry, 1, 0, 0)
         glRotate(self.rx, 0, 1, 0)
         glCallList(self.obj.gl_list)
-        self.smoke_l.update()
-        self.smoke_r.update()
-        self.rain.update()
+        self.smoke_l.update(isDisabled=self.disable_smoke)
+        self.smoke_r.update(isDisabled=self.disable_smoke)
+        self.rain.update(isDisabled=self.disable_rain)
 
         glutSwapBuffers()
         glutPostRedisplay()
@@ -139,7 +155,19 @@ class Main:
             self.ty += float(self.downY - y) / 6.0
         self.downX = x
         self.downY = y
+
+
         glutPostRedisplay()
 
+    def keyPressed(self, key, x, y):
+        keyStates[ord(key)] = True
+
+    def keyUp(self, key, x, y):
+        keyStates[ord(key)] = False
+
 if __name__ == "__main__":
+    # Initialize key states
+    for i in range (256):
+        keyStates.append(False)
+
     main_prog = Main()  
