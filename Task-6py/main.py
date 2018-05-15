@@ -3,7 +3,7 @@
 # LMB + move: rotate
 # RMB + move: pan
 # Scroll wheel: zoom in/out
-import sys, pygame, json
+import sys, pygame, json, math
 from pygame.locals import *
 from pygame.constants import *
 from OpenGL.GL import *
@@ -31,7 +31,7 @@ class Main:
         glutInit(sys.argv)
         glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
         glutInitWindowSize(800,600)
-        glutCreateWindow("OpenXV")
+        glutCreateWindow(b"OpenXV")
         glClearColor(0.3,0.3,0.3,1.0)
         hx = viewport[0]/2
         hy = viewport[1]/2
@@ -81,7 +81,12 @@ class Main:
 
         # Load params from file
         smoke_params = json.load(open('config/smoke_config.json'))
-        self.smoke = ParticleSystem(0,0,smoke_params)
+        def update_smoke_size(size, age):
+            return size + (0.01 * float(age)/400)
+        def update_smoke_alpha(init_alpha, age):
+            return init_alpha * math.exp(-0.008 * float(age))
+        self.smoke = ParticleSystem(0,0,smoke_params, size_updater=update_smoke_size, alpha_updater=update_smoke_alpha)
+        # self.smoke = ParticleSystem(0,0,smoke_params)
         
         rain_params = json.load(open('config/rain_config.json'))
         self.rain = ParticleSystem(0,0, rain_params)

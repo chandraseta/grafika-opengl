@@ -7,10 +7,10 @@ from OpenGL.GLUT import *
 
 # Place holder for all particles in the system
 # Made this global, as it needs access across
-particleList = []
+# particleList = []
 
 class Particle(object):
-    def __init__(self,x,y,z,vx,vy,vz,color,size,params):
+    def __init__(self,x,y,z,vx,vy,vz,color,size,params, size_updater = None, alpha_updater = None):
         #super(Particle, self).__init__()
         self.x = x        #Position
         self.y = y
@@ -28,6 +28,9 @@ class Particle(object):
         self.color = color
         self.is_dead = False
 
+        self.size_updater = size_updater
+        self.alpha_updater = alpha_updater
+
     def update(self,dx=0.05,dy=0.05, dz=0.05):
         self.vx += dx*self.wind
         self.vy += dy*self.wind - self.params['gravity']/100
@@ -41,6 +44,10 @@ class Particle(object):
         self.y += self.vy/100
         self.z += self.vz/100
 
+        if self.size_updater is not None:
+            self.size = self.size_updater(self.size, self.age)
+        if self.alpha_updater is not None:
+            self.color[3] = self.alpha_updater(0.5, self.age)
         # self.size += (0.01 * self.age/400)
         # self.color[3] = 0.5 - 0.5*float(self.age)/float(self.max_age)
         # self.color[3] = 0.5 * math.exp(-0.008 * float(self.age))
@@ -65,11 +72,11 @@ class Particle(object):
         self.color[3] = 1.0 - float(self.age)/float(self.max_age)
 
 class ParticleBurst(Particle):
-    def __init__(self,x,y,z,vx,vy,vz,params):
+    def __init__(self,x,y,z,vx,vy,vz,params, size_updater = None, alpha_updater = None):
         self.params = params
         color = self.params['launchColor']
         size = self.params['launchSize']
-        Particle.__init__(self,x,y,z,vx,vy,vz,color,size,params)
+        Particle.__init__(self,x,y,z,vx,vy,vz,color,size,params, size_updater, alpha_updater)
         self.wind = 1
         self.age = 0
 
@@ -79,13 +86,16 @@ class ParticleBurst(Particle):
         self.is_dead = self.age >= self.max_age
 
 class ParticleSystem():
-    def __init__(self, x, y, params):
+    def __init__(self, x, y, params, size_updater = None, alpha_updater = None):
         self.x = params['initPosX']
         self.y = params['initPosY']
         self.maxParticle = params['maxParticle']
         self.count = 0
         self.timer = 0
         self.params = params
+        self.particleList = []
+        self.size_updater = size_updater
+        self.alpha_updater = alpha_updater
         self.addExploder()
 
     def addExploder(self):
@@ -110,8 +120,8 @@ class ParticleSystem():
         startX = self.x + random.uniform(-varX,varX)
         startZ = random.uniform(-varZ,varZ)
 
-        f = ParticleBurst(startX,self.y,startZ,vx,vy,vz,self.params)
-        particleList.append(f)
+        f = ParticleBurst(startX,self.y,startZ,vx,vy,vz,self.params, self.size_updater, self.alpha_updater)
+        self.particleList.append(f)
 
 
     def update(self):
@@ -123,11 +133,11 @@ class ParticleSystem():
         print(interval)
         if self.timer % interval == 0 or self.timer < 2:
             for n in range(birthRate):
-                if(len(particleList) < maxParticle):
+                if(len(self.particleList) < maxParticle):
                     self.addExploder()
 
-        for p in particleList:
-            i = particleList.index(p)
+        for p in self.particleList:
+            i = self.particleList.index(p)
             x = self.params['windX']
             y = self.params['windY']
             z = self.params['windZ']
@@ -135,7 +145,7 @@ class ParticleSystem():
             p.check_particle_age()
             if p.is_dead:
                 p.color = [0.0,0.0,0.0,0.0]
-                particleList.pop(i)
+                self.particleList.pop(i)
             else:
                 p.draw()
                 #print('drawing sphere',i,' at ',p.age,' ',p.y)
