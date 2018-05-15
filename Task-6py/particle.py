@@ -113,6 +113,7 @@ class ParticleBurst(Particle):
         color = self.params['launchColor']
         size = self.params['launchSize']
         Particle.__init__(self,x,y,z,vx,vy,vz,color,size,params, size_updater, alpha_updater)
+        self.vz = vz
         self.wind = 1
         self.age = 0
 
@@ -129,8 +130,9 @@ class ParticleBurst(Particle):
                 vy = -math.sin(angle)*speed
                 x  = self.x + vx
                 y  = self.y + vy
+                z  = self.z + self.vz
                 # Create Fireworks particles
-                obj = Particle(x,y,vx,vy,color,6)			
+                obj = Particle(x,y,z,vx,vy,self.vz,color,0.5,self.params)		
                 self.particleList.append(obj)
 
     # Override parent method for Exploder particle

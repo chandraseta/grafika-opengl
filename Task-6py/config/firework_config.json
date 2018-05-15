@@ -15,11 +15,11 @@
     "explosionAngleVar" :   0,
 	"explodeCount"      :   40,
 	"launchColor"       :   [0.8,0.8,0.8,1.0],
-	"launchSize"        :   5,
+	"launchSize"        :   1,
 	"initPosX"          :   -10,
-    "initPosY"          :   0,
+    "initPosY"          :   10,
     "initPosZ"          :   -15,
     "varX"              :   0,
     "varZ"              :   5,
-    "birthRate"         :   10
+    "birthRate"         :   1
 }
