@@ -14,82 +14,87 @@ from OpenGL.GLUT import *
 from objloader import *
 from particle import *
 
-def display():
-    if e.type == QUIT:
-            sys.exit()
-        elif e.type == KEYDOWN and e.key == K_ESCAPE:
-            sys.exit()
-        elif e.type == MOUSEBUTTONDOWN:
-            if e.button == 4: zpos = max(1, zpos-1)
-            elif e.button == 5: zpos += 1
-            elif e.button == 1: rotate = True
-            elif e.button == 3: move = True
-        elif e.type == MOUSEBUTTONUP:
-            if e.button == 1: rotate = False
-            elif e.button == 3: move = False
-        elif e.type == MOUSEMOTION:
-            i, j = e.rel
-            if rotate:
-                rx += i
-                ry += j
-            if move:
-                tx += i
-                ty -= j
+class Main:
+    rx, ry = (0,0)
+    tx, ty = (0,0)
+    downX = 0
+    downY = 0
+    zpos = 5
+    rotate = move = False
+    leftButton = False
+    middleButton = False
+    rightButton = False
+    sdepth = 10
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    glLoadIdentity()
-    # RENDER OBJECT
-    glTranslate(tx/20., ty/20., - zpos)
-    glRotate(ry, 1, 0, 0)
-    glRotate(rx, 0, 1, 0)
-    glCallList(obj.gl_list)
+    def __init__(self):
+        viewport = (800,600)
+        glutInit(sys.argv)
+        glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
+        glutInitWindowSize(800,600)
+        glutCreateWindow("hello")
+        glClearColor(0,0,0,1.0)
+        hx = viewport[0]/2
+        hy = viewport[1]/2
 
-    smoke.update()
-    glutSwapBuffers()
+        glOrtho(0,150,0,150,0,100)
+        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
+        glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
 
-def mousePress:
+        glutDisplayFunc(self.display)
+        glutMouseFunc(self.mouseCallback)
+        glutMotionFunc(self.motionCallback)
+
+        # most obj files expect to be smooth-shaded
+        # LOAD OBJECT AFTER PYGAME INIT
+        #self.obj = OBJ(sys.argv[1], swapyz=True)
+
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        width, height = viewport
+        gluPerspective(90.0, width/float(height), 1, 100.0)
+        glEnable(GL_DEPTH_TEST)
+        glMatrixMode(GL_MODELVIEW)
 
 
-viewport = (800,600)
-glutInit(sys.argv)
-glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
-glutInitWindowSize(800,600)
-glutCreateWindow("hello")
-glutDisplayFunc(display)
-glutMouseFunc(mousePress)
-glClearColor(0,0,0,1.0)
-hx = viewport[0]/2
-hy = viewport[1]/2
+        # Load params from file
+        smoke_params = json.load(open('config/smoke_config.json'))
+        self.smoke = ParticleSystem(0,0,smoke_params)
 
-glLightfv(GL_LIGHT0, GL_POSITION,  (-40, 200, 100, 0.0))
-glLightfv(GL_LIGHT0, GL_AMBIENT, (0.9, 0.9, 0.9, 1.0))
-glLightfv(GL_LIGHT0, GL_DIFFUSE, (0.5, 0.5, 0.5, 1.0))
-glEnable(GL_LIGHT0)
-glEnable(GL_LIGHTING)
-glEnable(GL_COLOR_MATERIAL)
-glEnable(GL_DEPTH_TEST)
-glShadeModel(GL_SMOOTH)           
+        glutMainLoop()
 
-# most obj files expect to be smooth-shaded
-# LOAD OBJECT AFTER PYGAME INIT
-obj = OBJ(sys.argv[1], swapyz=True)
+    def display(self):
+        gluLookAt(0.0,0.0,1.0,0.0,0.0,1.0,0.0,0.0,1.0)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glLoadIdentity()
+        # RENDER OBJECT
+        glTranslate(self.tx/20., self.ty/20., - self.zpos)
+        glRotate(self.ry, 1, 0, 0)
+        glRotate(self.rx, 0, 1, 0)
+        #glCallList(self.obj.gl_list)
+        self.smoke.update()
+        glutSwapBuffers()
+        glutSolidSphere(0.5,20,20)
 
-clock = pygame.time.Clock()
+    def mouseCallback(self, button, state, x, y):
+        self.downX= x
+        self.downY= y
+        self.leftButton = ((button == GLUT_LEFT_BUTTON) and (state == GLUT_DOWN))
+        self.middleButton = ((button == GLUT_MIDDLE_BUTTON) and (state == GLUT_DOWN))
+        self.rightButton = ((button == GLUT_RIGHT_BUTTON) and (state == GLUT_DOWN))
+        glutPostRedisplay()
 
-glMatrixMode(GL_PROJECTION)
-glLoadIdentity()
-width, height = viewport
-gluPerspective(90.0, width/float(height), 1, 100.0)
-glEnable(GL_DEPTH_TEST)
-glMatrixMode(GL_MODELVIEW)
+    def motionCallback(self, x, y):
+        if (self.leftButton):
+            self.rx += float(x - self.downX) / 10.0
+            self.ry -= float(self.downY - y) / 10.0
+        if (self.middleButton):
+            self.zpos -= float(self.downY - y) / 10.0
+        if (self.rightButton):
+            self.tx += float(x - self.downX) / 6.0
+            self.ty += float(self.downY - y) / 6.0
+        self.downX = x
+        self.downY = y
+        glutPostRedisplay()
 
-rx, ry = (0,0)
-tx, ty = (0,0)
-zpos = 5
-rotate = move = False
-
-# Load params from file
-smoke_params = json.load(open('config/smoke_config.json'))
-smoke = ParticleSystem(0,0,smoke_params)
-
-glutMainLoop()
+main_prog = Main()

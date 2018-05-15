@@ -95,7 +95,6 @@ class ParticleSystem():
     def update(self):
         self.timer += 1
         for i in range(len(particleList)):
-            print('asd')
             p = particleList[i]
             x = self.params['windX']
             y = self.params['windY']
