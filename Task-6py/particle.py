@@ -83,7 +83,8 @@ class Particle(object):
             # self.color[3] = 0.5 * math.exp(-0.008 * float(self.age))
         
             # Collision with ground
-            if (self.y < 0.25):
+            if (self.y < 0):
+                self.y = 0
                 self.vy = 0
 
             self.check_particle_age()
@@ -116,7 +117,7 @@ class ParticleBurst(Particle):
         self.age = 0
 
     def explode(self):
-        if (self.params['explodeCount'] > 0):
+        if self.params['explodeCount'] > 0:
             #pick random burst color
             color = Utils.getRandomColor()	
             explodeCount = self.params['explodeCount']
@@ -129,22 +130,21 @@ class ParticleBurst(Particle):
                 x  = self.x + vx
                 y  = self.y + vy
                 # Create Fireworks particles
-                obj = Particle(x,y,vx,vy,color,self.params['particleSize'])			
+                obj = Particle(x,y,vx,vy,color,6)			
                 self.particleList.append(obj)
 
     # Override parent method for Exploder particle
     def check_particle_age(self):
-        # if self.vy < 0:
-        #     self.age += 1
+        if self.params['explodeCount'] > 0:
+            if self.vy < 0:
+                self.age += 1
 
-		# # Tweaking explode time
-        # temp = int (100 * random.random()) + self.params['explosionVariation']
-		
-        # if self.age > temp:
-        #     self.is_dead = True			
-        #     self.explode()
-        self.age += 1
-        self.is_dead = self.age >= self.max_age
+            if self.age > self.params['maxAge']:
+                self.is_dead = True			
+                self.explode()
+        else:
+            self.age += 1
+            self.is_dead = self.age >= self.max_age
 
 class ParticleSystem():
     def __init__(self, x, y, params, size_updater = None, alpha_updater = None):

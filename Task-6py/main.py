@@ -103,6 +103,9 @@ class Main:
         rain_params = json.load(open('config/rain_config.json'))
         self.rain = ParticleSystem(0,0, rain_params)
 
+        firework_params = json.load(open('config/firework_config.json'))
+        self.firework = ParticleSystem(0,0, firework_params)
+
         glutMainLoop()
 
     def display(self):
@@ -132,6 +135,7 @@ class Main:
         self.smoke_l.update(isDisabled=self.disable_smoke)
         self.smoke_r.update(isDisabled=self.disable_smoke)
         self.rain.update(isDisabled=self.disable_rain)
+        self.firework.update(isDisabled=self.disable_firework)
 
         glutSwapBuffers()
         glutPostRedisplay()
