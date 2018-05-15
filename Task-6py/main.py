@@ -84,12 +84,14 @@ class Main:
 
 
         # Load params from file
-        smoke_params = json.load(open('config/smoke_config.json'))
+        smoke_left = json.load(open('config/smoke_left_config.json'))
+        smoke_right = json.load(open('config/smoke_right_config.json'))
         def update_smoke_size(size, age):
             return size + (0.01 * float(age)/400)
         def update_smoke_alpha(init_alpha, age):
-            return init_alpha * math.exp(-0.008 * float(age))
-        self.smoke = ParticleSystem(0,0,smoke_params, size_updater=update_smoke_size, alpha_updater=update_smoke_alpha)
+            return init_alpha * math.exp(-0.04 * float(age))
+        self.smoke_l = ParticleSystem(0, 0, smoke_left, size_updater=update_smoke_size, alpha_updater=update_smoke_alpha)
+        self.smoke_r = ParticleSystem(0, 0, smoke_right, size_updater=update_smoke_size, alpha_updater=update_smoke_alpha)
         
         rain_params = json.load(open('config/rain_config.json'))
         self.rain = ParticleSystem(0,0, rain_params)
@@ -101,8 +103,8 @@ class Main:
         self.time = glutGet(GLUT_ELAPSED_TIME)
         if (self.time - self.timebase > 1000):
             print("FPS: "+str(self.frame*1000.0/(self.time-self.timebase)))
-            self.timebase = self.time;
-            self.frame = 0;
+            self.timebase = self.time
+            self.frame = 0
     
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glLoadIdentity()
@@ -111,7 +113,8 @@ class Main:
         glRotate(self.ry, 1, 0, 0)
         glRotate(self.rx, 0, 1, 0)
         glCallList(self.obj.gl_list)
-        self.smoke.update()
+        self.smoke_l.update()
+        self.smoke_r.update()
         self.rain.update()
 
         glutSwapBuffers()
