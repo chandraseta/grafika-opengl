@@ -132,7 +132,7 @@ class ParticleBurst(Particle):
                 y  = self.y + vy
                 z  = self.z + self.vz
                 # Create Fireworks particles
-                obj = Particle(x,y,z,vx,vy,self.vz,color,0.5,self.params)		
+                obj = Particle(x,y,z,vx,vy,self.vz,color,0.2,self.params)		
                 self.particleList.append(obj)
 
     # Override parent method for Exploder particle
@@ -175,7 +175,10 @@ class ParticleSystem():
             angleZ = baseAngle * 3.14/180
 
         vx = speed * math.cos(angle)
-        vy = -speed * math.sin(angle)
+        if (self.params['explodeCount'] > 0):
+            vy = speed * math.sin(angle)
+        else:
+            vy = -speed * math.sin(angle)
         vz = speed * math.cos(angleZ)
 
         varX = self.params['varX']
